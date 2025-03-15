@@ -4,10 +4,10 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 
 const clients = [
-  { name: "Small Businesses", icon: "/small-business-icon.jpg" },
-  { name: "Freelancers", icon: "/freelancer-icon.jpg" },
-  { name: "Entrepreneurs", icon: "/entrepreneur-icon.jpg" },
-  { name: "Individuals", icon: "/individual-icon.jpg" },
+  { name: "Small Businesses", icon: "/small-business-icon.png" },
+  { name: "Freelancers", icon: "/freelancer-icon.png" },
+  { name: "Entrepreneurs", icon: "/entrepreneur-icon.png" },
+  { name: "Individuals", icon: "/individual-icon.png" },
 ]
 
 export function ClientsSection() {
