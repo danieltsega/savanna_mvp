@@ -215,7 +215,9 @@ export function ServicesForm({ formData, updateFormData, errors, setErrors }: Se
 
             {/* Service Selection */}
             <div>
-                <Label>Select Service*</Label>
+                <Label>
+                    Select Service <span className="text-red-500">*</span>
+                </Label>
                 <RadioGroup
                     value={formData.service_type}
                     onValueChange={handleServiceChange}
@@ -234,7 +236,9 @@ export function ServicesForm({ formData, updateFormData, errors, setErrors }: Se
             {/* Tax Years (only if Tax Returns is selected) */}
             {formData.service_type === "Self-Assessment Tax Returns" && (
                 <div className="space-y-3">
-                    <Label>Select Your Tax Year*</Label>
+                    <Label>
+                        Select Your Tax Year <span className="text-red-500">*</span>
+                    </Label>
                     <RadioGroup
                         value={formData.selected_tax_year}
                         onValueChange={handleTaxYearChange}
@@ -467,7 +471,9 @@ export function ServicesForm({ formData, updateFormData, errors, setErrors }: Se
             {/* Other Service Information */}
             {formData.service_type === "Other" && (
                 <div>
-                    <Label htmlFor="other_service_details">Please provide details about the service you need</Label>
+                    <Label htmlFor="other_service_details">
+                        Please provide details about the service you need <span className="text-red-500">*</span>
+                    </Label>
                     <Textarea
                         id="other_service_details"
                         value={formData.other_service_details || ""}

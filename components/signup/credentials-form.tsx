@@ -76,7 +76,9 @@ export function CredentialsForm({ formData, updateFormData, passwordMatch, error
             </div>
 
             <div>
-                <Label htmlFor="password">Password*</Label>
+                <Label htmlFor="password">
+                    Password <span className="text-red-500">*</span>
+                </Label>
                 <Input
                     id="password"
                     type="password"
@@ -174,7 +176,9 @@ export function CredentialsForm({ formData, updateFormData, passwordMatch, error
             </div>
 
             <div>
-                <Label htmlFor="confirm_password">Confirm Password*</Label>
+                <Label htmlFor="confirm_password">
+                    Confirm Password <span className="text-red-500">*</span>
+                </Label>
                 <Input
                     id="confirm_password"
                     type="password"

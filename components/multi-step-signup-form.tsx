@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { PersonalInfoForm } from "./signup/personal-info-form"
 import { ServicesForm } from "./signup/services-form"
 import { CredentialsForm } from "./signup/credentials-form"
+import { ReviewForm } from "./signup/review-form"
 
 export function MultiStepSignupForm() {
     const [step, setStep] = useState(1)
@@ -17,12 +18,13 @@ export function MultiStepSignupForm() {
         1: false,
         2: false,
         3: false,
+        4: false,
     })
     const [formData, setFormData] = useState({
         // Personal Information
         first_name: "",
         last_name: "",
-        sex: "Male", // Default to Male
+        sex: "M", // Default to Male
         dob: "",
         current_address_line1: "",
         current_address_line2: "",
@@ -57,6 +59,7 @@ export function MultiStepSignupForm() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const router = useRouter()
     const [passwordMatch, setPasswordMatch] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     useEffect(() => {
         setPasswordMatch(formData.password === formData.confirm_password || formData.confirm_password === "")
@@ -195,6 +198,32 @@ export function MultiStepSignupForm() {
                 newErrors.other_service_details = "Please provide details about the service you need"
                 isValid = false
             }
+        } else if (currentStep === 3) {
+            // Validate Credentials
+            if (!formData.password) {
+                newErrors.password = "Password is required"
+                isValid = false
+            } else if (formData.password.length < 8) {
+                newErrors.password = "Password must be at least 8 characters long"
+                isValid = false
+            } else if (!/[A-Z]/.test(formData.password)) {
+                newErrors.password = "Password must include at least one uppercase letter"
+                isValid = false
+            } else if (!/[0-9]/.test(formData.password)) {
+                newErrors.password = "Password must include at least one number"
+                isValid = false
+            } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
+                newErrors.password = "Password must include at least one special character"
+                isValid = false
+            }
+
+            if (!formData.confirm_password) {
+                newErrors.confirm_password = "Please confirm your password"
+                isValid = false
+            } else if (formData.password !== formData.confirm_password) {
+                newErrors.confirm_password = "Passwords do not match"
+                isValid = false
+            }
         }
 
         setErrors(newErrors)
@@ -221,6 +250,9 @@ export function MultiStepSignupForm() {
         } else if (stepNumber === 3 && stepsCompleted[1] && stepsCompleted[2]) {
             // Can go to step 3 if steps 1 and 2 are completed
             setStep(3)
+        } else if (stepNumber === 4 && stepsCompleted[1] && stepsCompleted[2] && stepsCompleted[3]) {
+            // Can go to step 4 if steps 1, 2, and 3 are completed
+            setStep(4)
         } else {
             // Otherwise, validate the current step first
             if (validateStep(step)) {
@@ -229,6 +261,8 @@ export function MultiStepSignupForm() {
                     setStep(2)
                 } else if (stepNumber === 3 && step === 2) {
                     setStep(3)
+                } else if (stepNumber === 4 && step === 3) {
+                    setStep(4)
                 } else {
                     toast({
                         title: "Navigation Error",
@@ -266,78 +300,290 @@ export function MultiStepSignupForm() {
         window.scrollTo(0, 0)
     }
 
+    // Modify the handleSubmit function to better handle errors and display them to the user
+    // Modify the handleSubmit function to simulate a successful registration for client demo
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Basic password validation - just check length and match
-        if (formData.password.length < 8) {
-            toast({
-                title: "Password Error",
-                description: "Password must be at least 8 characters long.",
-                variant: "destructive",
-            })
-            return
-        }
-
-        if (!passwordMatch) {
-            toast({
-                title: "Error",
-                description: "Passwords do not match.",
-                variant: "destructive",
-            })
-            return
-        }
+        if (isSubmitting) return
+        setIsSubmitting(true)
 
         try {
-            // Create FormData object for file uploads
-            const submitData = new FormData()
+            // DEMO MODE: Simulate API processing time
+            console.log("DEMO MODE: Simulating registration process...")
+            console.log("Form data that would be submitted:", formData)
 
-            // Add all form fields to FormData
-            Object.entries(formData).forEach(([key, value]) => {
-                if (key === "documents") {
-                    // Skip documents here, we'll add them individually
-                } else if (key === "incomeSources") {
-                    submitData.append(key, JSON.stringify(value))
-                } else {
-                    submitData.append(key, value.toString())
-                }
-            })
+            // Simulate a delay to show loading state
+            await new Promise((resolve) => setTimeout(resolve, 2000))
 
-            // Add each document file
-            formData.documents.forEach((file) => {
-                submitData.append("documents", file)
-            })
+            // Store dummy tokens in localStorage for demo purposes
+            localStorage.setItem("accessToken", "demo-access-token-12345")
+            localStorage.setItem("userId", "demo-user-id-12345")
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/registration/`, {
-                method: "POST",
-                body: submitData,
-            })
-
-            if (response.ok) {
-                router.push("/signup-success")
-            } else {
-                const errorData = await response.json()
-                toast({
-                    title: "Error",
-                    description: errorData.detail || "An error occurred during signup.",
-                    variant: "destructive",
-                })
-            }
-        } catch (error) {
+            // Redirect to success page with verification flag set to false
+            router.push("/signup-success?verification=false")
+        } catch (error: any) {
             console.error("Signup error:", error)
             toast({
-                title: "Error",
-                description: "An unexpected error occurred. Please try again.",
+                title: "Registration Error",
+                description: error.message || "An unexpected error occurred. Please try again.",
                 variant: "destructive",
             })
+        } finally {
+            setIsSubmitting(false)
         }
+    }
+
+    /* ORIGINAL IMPLEMENTATION - UNCOMMENT TO RESTORE
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault()
+  
+      if (isSubmitting) return
+      setIsSubmitting(true)
+  
+      try {
+        // Step 1: Register the user
+        const registrationData = {
+          email: formData.email,
+          password1: formData.password,
+          password2: formData.confirm_password,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          sex: formData.sex === "Male" ? "M" : "F", // Only send M or F, no O option
+          dob: formData.dob,
+          current_address_line1: formData.current_address_line1,
+          current_address_line2: formData.current_address_line2,
+          current_city: formData.current_city,
+          current_zip: formData.current_zip,
+          current_country: formData.current_country,
+          previous_address_line1: formData.previous_address_line1,
+          previous_address_line2: formData.previous_address_line2,
+          previous_city: formData.previous_city,
+          previous_zip: formData.previous_zip,
+          previous_country: formData.previous_country,
+          same_as_current: formData.same_as_current,
+          phone_number: formData.phone_number,
+          whatsapp_number: formData.whatsapp_number,
+          same_as_phone: formData.same_as_phone,
+          nino: formData.nino,
+          utr: formData.utr,
+        }
+  
+        console.log("Registering user with data:", registrationData)
+        const registrationResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/registration/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registrationData),
+        })
+  
+        const registrationResult = await registrationResponse.json()
+        console.log("Registration response:", registrationResult)
+  
+        if (!registrationResponse.ok) {
+          // Handle specific error messages from the backend
+          if (registrationResult.sex) {
+            throw new Error(`Sex field error: ${registrationResult.sex[0]}`)
+          } else if (registrationResult.detail) {
+            throw new Error(registrationResult.detail)
+          } else {
+            // Format other errors if they exist
+            const errorMessages = Object.entries(registrationResult)
+              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`)
+              .join("; ")
+            throw new Error(errorMessages || "Registration failed")
+          }
+        }
+  
+        // Check if email verification is enabled
+        if (
+          registrationResult.detail &&
+          typeof registrationResult.detail === "string" &&
+          registrationResult.detail.includes("Verification email sent")
+        ) {
+          // Email verification is enabled, redirect to success page with verification flag
+          router.push("/signup-success?verification=true")
+          return
+        }
+  
+        // Email verification is disabled, we have tokens and user data
+        const { access, user } = registrationResult
+  
+        // Step 2: Login is not needed as registration already returns tokens when verification is disabled
+  
+        // Step 3: Create service if service type is selected
+        if (formData.service_type) {
+          const serviceData = {
+            service_type: mapServiceTypeToAPI(formData.service_type),
+            tax_year: formData.selected_tax_year || null,
+            other_service_details: formData.other_service_details || null,
+            documents: [], // We'll add document IDs after uploading
+          }
+  
+          console.log("Creating service with data:", serviceData)
+          const serviceResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services/services/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${access}`,
+            },
+            body: JSON.stringify(serviceData),
+          })
+  
+          if (!serviceResponse.ok) {
+            console.error("Failed to create service:", await serviceResponse.text())
+            throw new Error("Failed to create service")
+          }
+  
+          const serviceResult = await serviceResponse.json()
+          console.log("Service created:", serviceResult)
+  
+          // Upload documents if any
+          const documentIds = []
+  
+          if (formData.documents && formData.documents.length > 0) {
+            for (const file of formData.documents) {
+              const documentFormData = new FormData()
+              documentFormData.append("file", file)
+              documentFormData.append("description", `Document for ${formData.service_type}`)
+  
+              console.log("Uploading document:", file.name)
+              const documentResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services/documents/`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${access}`,
+                },
+                body: documentFormData,
+              })
+  
+              if (!documentResponse.ok) {
+                console.error("Failed to upload document:", await documentResponse.text())
+                continue
+              }
+  
+              const documentResult = await documentResponse.json()
+              console.log("Document uploaded:", documentResult)
+              documentIds.push(documentResult.id)
+            }
+  
+            // Update service with document IDs if we have any
+            if (documentIds.length > 0) {
+              console.log("Updating service with document IDs:", documentIds)
+              const updateResponse = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/services/services/${serviceResult.id}/`,
+                {
+                  method: "PATCH",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${access}`,
+                  },
+                  body: JSON.stringify({ documents: documentIds }),
+                },
+              )
+  
+              if (!updateResponse.ok) {
+                console.error("Failed to update service with documents:", await updateResponse.text())
+              } else {
+                console.log("Service updated with documents")
+              }
+            }
+          }
+  
+          // Create income sources if any
+          if (formData.incomeSources && formData.incomeSources.length > 0) {
+            for (const source of formData.incomeSources) {
+              // Skip if no company name or income type
+              if (!source.companyName || !source.incomeType) {
+                console.log("Skipping income source due to missing required fields:", source)
+                continue
+              }
+  
+              const incomeSourceData = {
+                service: serviceResult.id,
+                company_name: source.companyName,
+                job_title: source.jobTitle || "",
+                income_type: mapIncomeTypeToAPI(source.incomeType),
+                start_date: source.startDate || null,
+                end_date: source.endDate || null,
+              }
+  
+              console.log("Creating income source:", incomeSourceData)
+              const incomeSourceResponse = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/services/income-sources/`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${access}`,
+                  },
+                  body: JSON.stringify(incomeSourceData),
+                },
+              )
+  
+              if (!incomeSourceResponse.ok) {
+                console.error("Failed to create income source:", await incomeSourceResponse.text())
+              } else {
+                console.log("Income source created")
+              }
+            }
+          }
+        }
+  
+        // Store tokens in localStorage for future use
+        localStorage.setItem("accessToken", access)
+        if (user && user.id) {
+          localStorage.setItem("userId", user.id.toString())
+        }
+  
+        // Redirect to success page with verification flag set to false
+        router.push("/signup-success?verification=false")
+      } catch (error: any) {
+        console.error("Signup error:", error)
+        toast({
+          title: "Registration Error",
+          description: error.message || "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        })
+        setIsSubmitting(false)
+      }
+    }
+    */
+
+    // Helper function to map service types to API values
+    const mapServiceTypeToAPI = (serviceType: string): string => {
+        const mapping: Record<string, string> = {
+            "Self-Assessment Tax Returns": "self_assessment",
+            "Corporation Tax & Limited Company Services": "corporation_tax",
+            "VAT Returns & Compliance": "vat_returns",
+            "Payroll Services": "payroll",
+            "Bookkeeping & Financial Reporting": "bookkeeping",
+            "Business Start-Up & Advisory Services": "business_advisory",
+            Other: "other",
+        }
+
+        return mapping[serviceType] || "other"
+    }
+
+    // Helper function to map income types to API values
+    const mapIncomeTypeToAPI = (incomeType: string): string => {
+        const mapping: Record<string, string> = {
+            "Self-employed": "self_employed",
+            "PAYE/Employed": "employed",
+            Dividends: "dividends",
+            "Property Income": "property",
+            "Not sure": "not_sure",
+            Other: "other",
+        }
+
+        return mapping[incomeType] || "other"
     }
 
     return (
         <div className="w-full bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
             <div className="mb-10">
                 <div className="flex justify-between items-center mb-6">
-                    {[1, 2, 3].map((stepNumber) => (
+                    {[1, 2, 3, 4].map((stepNumber) => (
                         <div key={stepNumber} className="flex flex-col items-center" onClick={() => goToStep(stepNumber)}>
                             <div
                                 className={cn(
@@ -352,7 +598,13 @@ export function MultiStepSignupForm() {
                                 {stepNumber}
                             </div>
                             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {stepNumber === 1 ? "Personal Info" : stepNumber === 2 ? "Services" : "Credentials"}
+                                {stepNumber === 1
+                                    ? "Personal Info"
+                                    : stepNumber === 2
+                                        ? "Services"
+                                        : stepNumber === 3
+                                            ? "Credentials"
+                                            : "Review"}
                             </span>
                         </div>
                     ))}
@@ -360,12 +612,12 @@ export function MultiStepSignupForm() {
                 <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
                     <div
                         className="bg-primary h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${((step - 1) / 2) * 100}%` }}
+                        style={{ width: `${((step - 1) / 3) * 100}%` }}
                     ></div>
                 </div>
             </div>
 
-            <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()} className="space-y-8">
+            <form onSubmit={step === 4 ? handleSubmit : (e) => e.preventDefault()} className="space-y-8">
                 {step === 1 && (
                     <PersonalInfoForm formData={formData} updateFormData={updateFormData} errors={errors} setErrors={setErrors} />
                 )}
@@ -384,6 +636,8 @@ export function MultiStepSignupForm() {
                     />
                 )}
 
+                {step === 4 && <ReviewForm formData={formData} />}
+
                 <div className="flex justify-between mt-10 pt-4 border-t border-gray-200 dark:border-gray-700">
                     {step > 1 && (
                         <Button type="button" variant="outline" onClick={prevStep} size="lg">
@@ -391,16 +645,33 @@ export function MultiStepSignupForm() {
                         </Button>
                     )}
 
-                    {step < 3 ? (
+                    {step < 4 ? (
                         <Button type="button" className="ml-auto" onClick={nextStep} size="lg">
                             Next
                         </Button>
                     ) : (
-                        <Button type="submit" className="ml-auto" size="lg">
-                            Submit
+                        <Button type="submit" className="ml-auto" size="lg" disabled={isSubmitting}>
+                            {isSubmitting ? "Submitting..." : "Submit"}
                         </Button>
                     )}
                 </div>
+
+                {/* Add login link for existing users */}
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Already have an account?{" "}
+                        <a href="/login" className="text-primary hover:underline font-medium">
+                            Log in here
+                        </a>
+                    </p>
+                </div>
+
+                {isSubmitting && (
+                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md flex items-center">
+                        <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                        <p className="text-blue-700 dark:text-blue-400">Processing your registration. Please wait...</p>
+                    </div>
+                )}
             </form>
         </div>
     )

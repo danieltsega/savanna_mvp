@@ -109,8 +109,8 @@ export function LoginForm() {
       </Button>
       <div className="mt-4 text-center">
         <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
-        <Link href="/signup" className="text-primary hover:underline">
-          Sign Up
+        <Link href="/portal" className="text-primary hover:underline">
+          Apply Now
         </Link>
       </div>
     </form>

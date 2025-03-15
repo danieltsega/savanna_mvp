@@ -1,50 +1,79 @@
+"use client"
+
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { CheckCircle } from "lucide-react"
+import { CheckCircle, Mail, ArrowRight } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
 export default function SignupSuccessPage() {
+  const searchParams = useSearchParams()
+  const verificationNeeded = searchParams.get("verification") === "true"
+
   return (
     <div>
       <Navigation />
       <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center">
           <div className="flex justify-center">
-            <div className="h-20 w-20 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-              <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
-            </div>
+            {verificationNeeded ? (
+              <Mail className="h-16 w-16 text-blue-500" />
+            ) : (
+              <CheckCircle className="h-16 w-16 text-green-500" />
+            )}
           </div>
 
-          <h1 className="text-2xl font-bold">Client Portal Registration Complete!</h1>
+          <h1 className="text-2xl font-bold">
+            {verificationNeeded ? "Verification Email Sent!" : "Account Created Successfully!"}
+          </h1>
 
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-md">
-            <p className="text-green-800 dark:text-green-300 mb-2">Thank you for registering with our client portal.</p>
-            <p className="text-green-700 dark:text-green-400">
-              We've sent a verification email to your inbox. Please verify your email to activate your account and
-              access your client portal.
-            </p>
+          <div
+            className={`${verificationNeeded ? "bg-blue-50 dark:bg-blue-900/20" : "bg-green-50 dark:bg-green-900/20"} p-4 rounded-md`}
+          >
+            {verificationNeeded ? (
+              <>
+                <p className="text-blue-800 dark:text-blue-300 mb-2">We've sent a verification email to your inbox.</p>
+                <p className="text-blue-700 dark:text-blue-400">
+                  Please check your email and click the verification link to activate your account.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-green-800 dark:text-green-300 mb-2">Your account has been created successfully.</p>
+                <p className="text-green-700 dark:text-green-400">
+                  You can now log in to access your account and services.
+                </p>
+              </>
+            )}
           </div>
 
-          <div className="space-y-4 pt-2">
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              <p>Once verified, you'll be able to:</p>
-              <ul className="list-disc list-inside text-left mt-2">
-                <li>Access your financial documents</li>
-                <li>Track the progress of your services</li>
-                <li>Communicate with your accountant</li>
-                <li>Receive important updates and notifications</li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Button asChild variant="default">
-                <Link href="/login">Go to Login</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/">Return to Homepage</Link>
-              </Button>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+            {verificationNeeded ? (
+              <>
+                <Button asChild variant="outline" className="flex-1">
+                  <Link href="/">Back to Home</Link>
+                </Button>
+                <Button asChild className="flex-1 group">
+                  <Link href="/login" className="flex items-center justify-center">
+                    Check Later
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild className="flex-1 group">
+                  <Link href="/login" className="flex items-center justify-center">
+                    Log In Now
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="flex-1">
+                  <Link href="/">Back to Home</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -336,7 +336,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
             {/* Full Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <Label htmlFor="first_name">First Name*</Label>
+                    <Label htmlFor="first_name">
+                        First Name <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="first_name"
                         value={formData.first_name}
@@ -357,7 +359,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                     )}
                 </div>
                 <div>
-                    <Label htmlFor="last_name">Last Name*</Label>
+                    <Label htmlFor="last_name">
+                        Last Name <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="last_name"
                         value={formData.last_name}
@@ -381,20 +385,22 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
 
             {/* Sex */}
             <div>
-                <Label>Sex*</Label>
+                <Label>
+                    Sex <span className="text-red-500">*</span>
+                </Label>
                 <RadioGroup
                     value={formData.sex}
                     onValueChange={(value) => updateFormData({ sex: value })}
                     className="flex space-x-4"
                     required
-                    defaultValue="Male"
+                    defaultValue="M"
                 >
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Male" id="male" />
+                        <RadioGroupItem value="M" id="male" />
                         <Label htmlFor="male">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Female" id="female" />
+                        <RadioGroupItem value="F" id="female" />
                         <Label htmlFor="female">Female</Label>
                     </div>
                 </RadioGroup>
@@ -402,7 +408,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
 
             {/* Date of Birth */}
             <div>
-                <Label>Date of Birth*</Label>
+                <Label>
+                    Date of Birth <span className="text-red-500">*</span>
+                </Label>
                 <div className="relative">
                     <Input
                         type="text"
@@ -472,9 +480,13 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
 
             {/* Current Address */}
             <div className="space-y-4">
-                <h3 className="text-lg font-medium">Current Address*</h3>
+                <h3 className="text-lg font-medium">
+                    Current Address <span className="text-red-500">*</span>
+                </h3>
                 <div>
-                    <Label htmlFor="current_address_line1">Address Line 1</Label>
+                    <Label htmlFor="current_address_line1">
+                        Address Line 1 <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="current_address_line1"
                         value={formData.current_address_line1}
@@ -500,7 +512,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <Label htmlFor="current_city">City</Label>
+                        <Label htmlFor="current_city">
+                            City <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                             id="current_city"
                             value={formData.current_city}
@@ -516,7 +530,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                         />
                     </div>
                     <div>
-                        <Label htmlFor="current_zip">Postcode</Label>
+                        <Label htmlFor="current_zip">
+                            Postcode <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                             id="current_zip"
                             value={formData.current_zip}
@@ -532,7 +548,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                         />
                     </div>
                     <div>
-                        <Label htmlFor="current_country">Country</Label>
+                        <Label htmlFor="current_country">
+                            Country <span className="text-red-500">*</span>
+                        </Label>
                         <Select
                             value={formData.current_country}
                             onValueChange={(value) => updateFormData({ current_country: value })}
@@ -567,7 +585,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
             {/* Previous Address */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium">Previous Address*</h3>
+                    <h3 className="text-lg font-medium">
+                        Previous Address <span className="text-red-500">*</span>
+                    </h3>
                     <div className="flex items-center space-x-2">
                         <Switch
                             id="same_as_current"
@@ -583,112 +603,131 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                     </div>
                 </div>
 
-                {/* Always show the fields, but disable them if same_as_current is checked */}
-                <div>
-                    <Label htmlFor="previous_address_line1">Address Line 1</Label>
-                    <Input
-                        id="previous_address_line1"
-                        value={formData.previous_address_line1}
-                        onChange={(e) => {
-                            const value = e.target.value
-                            updateFormData({ previous_address_line1: value })
-                            if (value && errors.previous_address_line1) {
-                                setErrors({ ...errors, previous_address_line1: "" })
-                            }
-                        }}
-                        disabled={formData.same_as_current}
-                        className={formData.same_as_current ? "bg-gray-100 dark:bg-gray-700" : ""}
-                        placeholder="456 Main Road"
-                        required
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="previous_address_line2">Address Line 2</Label>
-                    <Input
-                        id="previous_address_line2"
-                        value={formData.previous_address_line2}
-                        onChange={(e) => updateFormData({ previous_address_line2: e.target.value })}
-                        disabled={formData.same_as_current}
-                        className={formData.same_as_current ? "bg-gray-100 dark:bg-gray-700" : ""}
-                        placeholder="Apartment 2C (optional)"
-                    />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <Label htmlFor="previous_city">City</Label>
-                        <Input
-                            id="previous_city"
-                            value={formData.previous_city}
-                            onChange={(e) => {
-                                const value = e.target.value
-                                updateFormData({ previous_city: value })
-                                if (value && errors.previous_city) {
-                                    setErrors({ ...errors, previous_city: "" })
-                                }
-                            }}
-                            disabled={formData.same_as_current}
-                            className={formData.same_as_current ? "bg-gray-100 dark:bg-gray-700" : ""}
-                            placeholder="Manchester"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="previous_zip">Postcode</Label>
-                        <Input
-                            id="previous_zip"
-                            value={formData.previous_zip}
-                            onChange={(e) => {
-                                const value = e.target.value
-                                updateFormData({ previous_zip: value })
-                                if (value && errors.previous_zip) {
-                                    setErrors({ ...errors, previous_zip: "" })
-                                }
-                            }}
-                            disabled={formData.same_as_current}
-                            className={formData.same_as_current ? "bg-gray-100 dark:bg-gray-700" : ""}
-                            placeholder="M1 1AA"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="previous_country">Country</Label>
-                        <Select
-                            value={formData.previous_country}
-                            onValueChange={(value) => updateFormData({ previous_country: value })}
-                            disabled={formData.same_as_current}
-                            defaultValue="United Kingdom"
-                        >
-                            <SelectTrigger className={formData.same_as_current ? "bg-gray-100 dark:bg-gray-700" : ""}>
-                                <SelectValue placeholder="Select country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <div className="mb-2 px-2">
-                                    <Input
-                                        placeholder="Search countries..."
-                                        className="h-8"
-                                        value={previousCountrySearch}
-                                        onChange={(e) => setPreviousCountrySearch(e.target.value)}
-                                        ref={previousSearchRef}
-                                        disabled={formData.same_as_current}
-                                    />
-                                </div>
-                                <div className="max-h-[200px] overflow-y-auto">
-                                    {filteredPreviousCountries.map((country) => (
-                                        <SelectItem key={country} value={country}>
-                                            {country}
-                                        </SelectItem>
-                                    ))}
-                                </div>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
+                {/* Only show previous address fields if same_as_current is false */}
+                {!formData.same_as_current && (
+                    <>
+                        <div>
+                            <Label htmlFor="previous_address_line1">
+                                Address Line 1 <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                                id="previous_address_line1"
+                                value={formData.previous_address_line1}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    updateFormData({ previous_address_line1: value })
+                                    if (value && errors.previous_address_line1) {
+                                        setErrors({ ...errors, previous_address_line1: "" })
+                                    }
+                                }}
+                                placeholder="456 Main Road"
+                                required
+                            />
+                            {errors.previous_address_line1 && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center">
+                                    <AlertCircle className="h-4 w-4 mr-1" /> {errors.previous_address_line1}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <Label htmlFor="previous_address_line2">Address Line 2</Label>
+                            <Input
+                                id="previous_address_line2"
+                                value={formData.previous_address_line2}
+                                onChange={(e) => updateFormData({ previous_address_line2: e.target.value })}
+                                placeholder="Apartment 2C (optional)"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <Label htmlFor="previous_city">
+                                    City <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="previous_city"
+                                    value={formData.previous_city}
+                                    onChange={(e) => {
+                                        const value = e.target.value
+                                        updateFormData({ previous_city: value })
+                                        if (value && errors.previous_city) {
+                                            setErrors({ ...errors, previous_city: "" })
+                                        }
+                                    }}
+                                    placeholder="Manchester"
+                                    required
+                                />
+                                {errors.previous_city && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <AlertCircle className="h-4 w-4 mr-1" /> {errors.previous_city}
+                                    </p>
+                                )}
+                            </div>
+                            <div>
+                                <Label htmlFor="previous_zip">
+                                    Postcode <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="previous_zip"
+                                    value={formData.previous_zip}
+                                    onChange={(e) => {
+                                        const value = e.target.value
+                                        updateFormData({ previous_zip: value })
+                                        if (value && errors.previous_zip) {
+                                            setErrors({ ...errors, previous_zip: "" })
+                                        }
+                                    }}
+                                    placeholder="M1 1AA"
+                                    required
+                                />
+                                {errors.previous_zip && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <AlertCircle className="h-4 w-4 mr-1" /> {errors.previous_zip}
+                                    </p>
+                                )}
+                            </div>
+                            <div>
+                                <Label htmlFor="previous_country">
+                                    Country <span className="text-red-500">*</span>
+                                </Label>
+                                <Select
+                                    value={formData.previous_country}
+                                    onValueChange={(value) => updateFormData({ previous_country: value })}
+                                    defaultValue="United Kingdom"
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select country" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <div className="mb-2 px-2">
+                                            <Input
+                                                placeholder="Search countries..."
+                                                className="h-8"
+                                                value={previousCountrySearch}
+                                                onChange={(e) => setPreviousCountrySearch(e.target.value)}
+                                                ref={previousSearchRef}
+                                            />
+                                        </div>
+                                        <div className="max-h-[200px] overflow-y-auto">
+                                            {filteredPreviousCountries.map((country) => (
+                                                <SelectItem key={country} value={country}>
+                                                    {country}
+                                                </SelectItem>
+                                            ))}
+                                        </div>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* NINO and UTR */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <Label htmlFor="nino">NINO (National Insurance Number)*</Label>
+                    <Label htmlFor="nino">
+                        NINO (National Insurance Number) <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="nino"
                         value={formData.nino}
@@ -711,7 +750,7 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                 </div>
                 <div>
                     <Label htmlFor="utr">
-                        UTR (Unique Tax Reference)*
+                        UTR (Unique Tax Reference) <span className="text-red-500">*</span>
                         <span className="block text-xs text-gray-500 mt-1">
                             Your UTR is the 10 digits long number that HMRC have generated for you when you registered for
                             self-assessment. If you do not have an UTR number, please type in 'N/A'
@@ -741,7 +780,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
             {/* Contact Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <Label htmlFor="phone_number">Phone Number*</Label>
+                    <Label htmlFor="phone_number">
+                        Phone Number <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="phone_number"
                         value={formData.phone_number}
@@ -769,7 +810,9 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                     <p className="text-xs text-gray-500 mt-1">UK format: +44 or 0 followed by 10-11 digits</p>
                 </div>
                 <div>
-                    <Label htmlFor="email">Email*</Label>
+                    <Label htmlFor="email">
+                        Email <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                         id="email"
                         type="email"
@@ -799,7 +842,7 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
             <div>
                 <div className="flex items-center justify-between">
                     <Label htmlFor="whatsapp_number" className="font-medium">
-                        WhatsApp Number*
+                        WhatsApp Number <span className="text-red-500">*</span>
                     </Label>
                     <div className="flex items-center space-x-2">
                         <Switch
@@ -819,26 +862,30 @@ export function PersonalInfoForm({ formData, updateFormData, errors, setErrors }
                         </Label>
                     </div>
                 </div>
-                {/* Always show the field, but disable it if same_as_phone is checked */}
-                <Input
-                    id="whatsapp_number"
-                    value={formData.whatsapp_number}
-                    onChange={(e) => {
-                        const value = e.target.value
-                        updateFormData({ whatsapp_number: value })
-                        if (value && errors.whatsapp_number) {
-                            setErrors({ ...errors, whatsapp_number: "" })
-                        }
-                    }}
-                    disabled={formData.same_as_phone}
-                    className={`mt-2 ${formData.same_as_phone ? "bg-gray-100 dark:bg-gray-700" : ""}`}
-                    placeholder="+44 7700 900123"
-                    required
-                />
-                {errors.whatsapp_number && !formData.same_as_phone && (
-                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                        <AlertCircle className="h-4 w-4 mr-1" /> {errors.whatsapp_number}
-                    </p>
+
+                {/* Only show WhatsApp field if same_as_phone is false */}
+                {!formData.same_as_phone && (
+                    <>
+                        <Input
+                            id="whatsapp_number"
+                            value={formData.whatsapp_number}
+                            onChange={(e) => {
+                                const value = e.target.value
+                                updateFormData({ whatsapp_number: value })
+                                if (value && errors.whatsapp_number) {
+                                    setErrors({ ...errors, whatsapp_number: "" })
+                                }
+                            }}
+                            className="mt-2"
+                            placeholder="+44 7700 900123"
+                            required
+                        />
+                        {errors.whatsapp_number && (
+                            <p className="text-red-500 text-sm mt-1 flex items-center">
+                                <AlertCircle className="h-4 w-4 mr-1" /> {errors.whatsapp_number}
+                            </p>
+                        )}
+                    </>
                 )}
             </div>
         </div>
