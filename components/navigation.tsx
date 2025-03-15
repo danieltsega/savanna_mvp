@@ -133,7 +133,7 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center">
-            <Image src="/GA-logo.png" alt="Savanna Accountancy Logo" width={40} height={40} className="mr-2" />
+            <Image src="/GA-logo.svg" alt="Savanna Accountancy Logo" width={40} height={40} className="mr-2" />
             <span className="text-2xl font-bold text-primary-foreground dark:text-primary">Savanna Accountancy</span>
           </Link>
           <div className="hidden md:flex items-center space-x-1" ref={dropdownRef}>
